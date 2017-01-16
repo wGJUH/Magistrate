@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_textbook"
+            android:icon="@drawable/ic_book_open_page_variant_black_48dp"
+            android:title="Textbook" />
+        <item
+            android:id="@+id/nav_questions"
+            android:icon="@drawable/ic_alert_circle_black_48dp"
+            android:title="Questions" />
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/ic_account_multiple_black_48dp"
+            android:title="Users" />
+        <item
+            android:id="@+id/nav_results"
+            android:icon="@drawable/ic_chart_areaspline_black_48dp"
+            android:title="Results" />
+        <item
+            android:id="@+id/nav_about_system"
+            android:icon="@drawable/ic_help_black_48dp"
+            android:title="About system" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send message to group" />
+        </menu>
+    </item>
+
+</menu>
