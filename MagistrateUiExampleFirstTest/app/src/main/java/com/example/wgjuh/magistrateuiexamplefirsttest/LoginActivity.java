@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity /*implements LoaderCallbacks<Cursor>*/ {
+public class LoginActivity extends AppCompatActivity implements OnClickListener{
 
     /**
      * Regex выражение для проверки поля Email.
@@ -69,11 +72,17 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    private Switch loginSwitch;
+    public SqlWorker sqlWorker;
+    private Button buttonTextBook;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        sqlWorker = SqlWorker.getInstance(this);
+        buttonTextBook = (Button)findViewById(R.id.button_textbook);
+        buttonTextBook.setOnClickListener(this);
+        loginSwitch = (Switch)findViewById(R.id.switch_admin_user);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
        // populateAutoComplete();
@@ -143,6 +152,11 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
     /**
      * Callback received when a permissions request has been completed.
      */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loginSwitch.setVisibility(View.VISIBLE);
+    }
    /* @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -159,6 +173,17 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(SqlWorker.LOG_TAG,"Start new thread");
+        showProgress(true);
+        mAuthTask = new UserLoginTask(data.getStringExtra("EMAIL"), data.getStringExtra("PASSWORD"));
+        mAuthTask.execute((Void) null);
+        loginSwitch.setVisibility(View.GONE);
+
+    }
+
     /**
      * Метод запуска логирования в приложение, либо регистрации в случае если пользователь не существовал.
      */
@@ -215,6 +240,24 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        } else if (sqlWorker.isUserExist(email,password)){
+            Log.d(SqlWorker.LOG_TAG,"EXIST");
+            Log.d(SqlWorker.LOG_TAG,"Start new thread");
+            showProgress(true);
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
+            loginSwitch.setVisibility(View.GONE);
+        } else if (!sqlWorker.isEmailInBase(email) && !cancel){
+            Intent intent = new Intent(this, UserCreateActivity.class);
+            intent.putExtra("PASSWORD",password);
+            intent.putExtra("EMAIL",email);
+            intent.putExtra("IS_ADMIN",loginSwitch.isChecked()?1:2);
+            Log.d(SqlWorker.LOG_TAG,"Start new user activity");
+            startActivityForResult(intent,1);
+        } else {
+            Toast.makeText(this,"Does you forget your password ?",Toast.LENGTH_SHORT).show();
+            focusView = mPasswordView;
+            cancel = true;
         }
         /**
          * Если произошла хотябы одна ошибка, фокусируемся на поле с ошибкой, иначе показываем прогрессбар и запускаем процесс авторизации.
@@ -226,9 +269,7 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Log.d(SqlWorker.LOG_TAG,"Start new thread");
         }
     }
 
@@ -328,6 +369,21 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button_textbook:
+                String sqlQuery = "select account_name as name, account_password as password, role_name as role, account_user_name as user_name "
+                        +"from users "
+                        +"left join roles "
+                        +"on users.account_role = roles.id";
+                sqlWorker.executeSql(sqlQuery/*"select account_name, account_password, role_name from  users left join roles on users.account_role = roles.id"*/,null);
+                break;
+            default:
+                break;
+        }
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -380,12 +436,20 @@ public class LoginActivity extends AppCompatActivity /*implements LoaderCallback
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
+            String email = mEmailView.getText().toString();
             if (success) {
                 //finish();
-                Intent intent = new Intent(getBaseContext(),AdministrativeActivity.class);
-                intent.putExtra("LOGIN_NAME",mEmailView.getText().toString());
-                startActivity(intent);
+                if(loginSwitch.isChecked()) {
+                    Intent intent = new Intent(getBaseContext(), AdministrativeActivity.class);
+                    intent.putExtra("LOGIN_NAME", email);
+                    intent.putExtra("ACCOUNT_ID", sqlWorker.getUserId(email));
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(getBaseContext(), UserActivity.class);
+                    intent.putExtra("LOGIN_NAME", mEmailView.getText().toString());
+                    intent.putExtra("ACCOUNT_ID", sqlWorker.getUserId(email));
+                    startActivity(intent);
+                }
                 } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

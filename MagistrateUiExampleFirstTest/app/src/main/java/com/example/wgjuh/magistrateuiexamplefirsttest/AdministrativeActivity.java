@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,15 +42,18 @@ public class AdministrativeActivity extends AppCompatActivity implements Navigat
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
+    private SqlWorker sqlWorker;
+    private int groups_count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administrative);
 
+        sqlWorker = SqlWorker.getInstance(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Personal Account Administrator");
-
+        groups_count = sqlWorker.getGroupsCount(getIntent().getIntExtra("ACCOUNT_ID",-7733));
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -120,7 +124,8 @@ public class AdministrativeActivity extends AppCompatActivity implements Navigat
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+        Log.d(SqlWorker.LOG_TAG," "+item.getItemId());
+        Intent intent;
         switch (item.getItemId()){
             case R.id.nav_textbook:
                 break;
@@ -128,9 +133,19 @@ public class AdministrativeActivity extends AppCompatActivity implements Navigat
                 break;
             case  R.id.nav_users:
                 break;
+            case R.id.nav_groups:
+                intent = new Intent(this,GroupActivity.class);
+                intent.putExtra("ACCOUNT_ID",getIntent().getIntExtra("ACCOUNT_ID",-7733));
+                startActivity(intent);
+                break;
             case  R.id.nav_results:
                 break;
             case R.id.nav_about_system:
+                break;
+            case R.id.nav_settings:
+                intent = new Intent(this,SettingsActivity.class);
+                intent.putExtra("ACCOUNT_ID",getIntent().getIntExtra("ACCOUNT_ID",-7733));
+                startActivity(intent);
                 break;
             case R.id.nav_send:
                 break;
@@ -138,7 +153,7 @@ public class AdministrativeActivity extends AppCompatActivity implements Navigat
                 break;
         }
 
-        ((DrawerLayout)findViewById(R.id.drawer_layout)).closeDrawer(Gravity.START);
+        ((DrawerLayout)findViewById(R.id.drawer_layout)).closeDrawer(Gravity.LEFT);
         return true;
     }
 
@@ -197,9 +212,13 @@ public class AdministrativeActivity extends AppCompatActivity implements Navigat
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return groups_count;
         }
-
+        private int getGroupsCount(){
+            int count = 0;
+            sqlWorker.getGroupsCount(getIntent().getIntExtra("ACCOUNT_ID",-7733));
+            return count;
+        }
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {

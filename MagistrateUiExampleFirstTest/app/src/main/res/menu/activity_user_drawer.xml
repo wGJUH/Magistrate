@@ -14,10 +14,7 @@
             android:id="@+id/nav_users"
             android:icon="@drawable/ic_account_multiple_black_48dp"
             android:title="Users" />
-        <item
-            android:id="@+id/nav_groups"
-            android:icon="@drawable/ic_group_work_black_48dp"
-            android:title="Groups" />
+
         <item
             android:id="@+id/nav_results"
             android:icon="@drawable/ic_chart_areaspline_black_48dp"
@@ -33,12 +30,11 @@
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_black_48dp"
-                android:title="@string/action_settings"
-                />
+                android:title="@string/action_settings" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send message to group" />
+                android:title="Send" />
         </menu>
     </item>
 

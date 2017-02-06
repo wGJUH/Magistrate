@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_user_create"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.wgjuh.magistrateuiexamplefirsttest.UserCreateActivity">
+    <LinearLayout
+        android:id="@+id/user_name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/fio"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="ФИО"
+            android:gravity="center_vertical"
+            android:textSize="14sp" />
+
+        <EditText
+        android:id="@+id/new_user_edit_text"
+        android:hint="@string/enter_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="14sp"/>
+    </LinearLayout>
+    <Button
+        android:layout_below="@+id/user_name_field"
+        android:id="@+id/button_accept_user_creation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/accept_group"/>
+</RelativeLayout>

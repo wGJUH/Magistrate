@@ -21,4 +21,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="button_textbook">Read textbook</string>
+    <string name="title_activity_user">UserActivity</string>
+    <string name="select_your_role">Are you administrator?</string>
+    <string name="forget_password">Does you forget your password ?</string>
+    <string name="button_password_update">Update your password</string>
+    <string name="settings_field_hint">Input your new password</string>
+    <string name="input_your_group_name">Input your group name</string>
+    <string name="accept_group">Accept</string>
+    <string name="enter_user_name">Input your user name</string>
 </resources>

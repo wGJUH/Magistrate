@@ -26,6 +26,15 @@
             android:name=".AdministrativeActivity"
             android:label="@string/title_activity_administrative"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".GroupActivity" />
+        <activity android:name=".GroupCreatActivity" />
+        <activity android:name=".SingleGroupActivity" />
+        <activity android:name=".UserCreateActivity"></activity>
     </application>
 
 </manifest>
