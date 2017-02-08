@@ -13,4 +13,11 @@
     tools:context="com.example.wgjuh.magistrateuiexamplefirsttest.UserActivity"
     tools:showIn="@layout/app_bar_user">
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/spinnerArticles" />
 </RelativeLayout>

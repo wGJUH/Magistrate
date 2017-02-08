@@ -1,9 +1,11 @@
 package com.example.wgjuh.magistrateuiexamplefirsttest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,14 +15,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class UserActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
+Spinner spinnerArticles;
+    public static String TAG = "DEBUGGABLE_TAG";
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        spinnerArticles = (Spinner)findViewById(R.id.spinnerArticles);
+        //spinnerArticles.setAdapter(new ArrayAdapter<String>());
+        spinnerArticles.setOnItemSelectedListener(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -79,11 +89,16 @@ public class UserActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()){
             case R.id.nav_settings:
-                Intent intent = new Intent(this,SettingsActivity.class);
+                intent = new Intent(this,SettingsActivity.class);
                 intent.putExtra("ACCOUNT_ID",getIntent().getIntExtra("ACCOUNT_ID",-7733));
                 startActivity(intent);
+                break;
+            case R.id.nav_textbook:
+                intent = new Intent(this,Library.class);
+               startActivity(intent);
                 break;
             default:
                 break;
@@ -92,5 +107,23 @@ public class UserActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        sharedPreferences = getSharedPreferences("currentArticlePref",MODE_PRIVATE);
+        switch(view.getId()){
+            case R.id.spinnerArticles:
+                sharedPreferences.edit().putInt("currentArticle",position).apply();
+                break;
+            default:
+                Log.e(TAG,"Unknown view id");
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

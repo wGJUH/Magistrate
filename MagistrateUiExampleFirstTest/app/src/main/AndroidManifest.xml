@@ -34,6 +34,7 @@
         <activity android:name=".GroupActivity" />
         <activity android:name=".GroupCreatActivity" />
         <activity android:name=".SingleGroupActivity" />
+        <activity android:name=".Library" />
         <activity android:name=".UserCreateActivity"></activity>
     </application>
 
