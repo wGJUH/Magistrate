@@ -161,7 +161,7 @@ public class SqlWorker extends SQLiteOpenHelper{
     public int getUserId(String email){
         Integer id = -7733;
         opendatabase();
-        Cursor cursor = database.rawQuery("select id from users where account_name = ?", new String[]{email});
+        Cursor cursor = database.rawQuery("select id from user where user_name = ?", new String[]{email});
         if (cursor.moveToFirst())
         id = cursor.getInt(cursor.getColumnIndex("id"));
         cursor.close();
@@ -171,17 +171,15 @@ public class SqlWorker extends SQLiteOpenHelper{
     public long updateUserPassword(String password, String id){
         long updated = 0L;
         opendatabase();
-        database.execSQL("update users set account_password = ? where id = ?", new String[]{password, id});
+        database.execSQL("update user set user_password = ? where id = ?", new String[]{password, id});
         close();
         return updated;
     }
     boolean isUserExist(String email, String password){
         opendatabase();
-        String sqlQuery = "select account_name as name, account_password as password, role_name as role "
-                +"from users "
-                +"left join roles "
-                +"on users.account_role = roles.id "
-                +"where users.account_name = ? AND users.account_password = ?";
+        String sqlQuery = "select user_name as name, user_password as password "
+                +"from user "
+                +"where name = ? AND password = ?";
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{email, password});
         close();
         Boolean isExist = cursor.moveToFirst();
@@ -322,7 +320,38 @@ public class SqlWorker extends SQLiteOpenHelper{
     }
 
 
-
+    public ArrayList<String> getQuestions(int theme){
+        ArrayList<String> questions = new ArrayList<>();
+        String sqlCmd = "select question from Questions where theme = ?";
+        Cursor cursor = database.rawQuery(sqlCmd,new String[]{Integer.toString(theme)});
+        if (cursor.moveToFirst())
+            do{
+                questions.add(cursor.getString(cursor.getColumnIndex("question")));
+            }while (cursor.moveToNext());
+        return questions;
+    }
+    public ArrayList<String> getThemes(int article){
+        ArrayList<String> themes = new ArrayList<>();
+        String sqlCmd = "select name from Themes where article = ?";
+        Cursor cursor = database.rawQuery(sqlCmd,new String[]{Integer.toString(article)});
+        if (cursor.moveToFirst())
+            do{
+                themes.add(cursor.getString(cursor.getColumnIndex("question")));
+            }while (cursor.moveToNext());
+        return themes;
+    }
+    public ArrayList<String> getArticles(){
+        Log.d(UserActivity.TAG,"getArticles");
+        ArrayList<String> articles = new ArrayList<>();
+        String sqlCmd = "select name from articles";
+        Cursor cursor = database.rawQuery(sqlCmd,null);
+        if (cursor.moveToFirst())
+            do{
+                articles.add(cursor.getString(cursor.getColumnIndex("name")));
+                Log.d(UserActivity.TAG,articles.get(articles.size()-1));
+            }while (cursor.moveToNext());
+        return articles;
+    }
     @Override
     public void onCreate(SQLiteDatabase db) {
 

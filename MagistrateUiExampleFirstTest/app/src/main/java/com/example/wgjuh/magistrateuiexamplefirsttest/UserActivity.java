@@ -22,15 +22,19 @@ import android.widget.Spinner;
 public class UserActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
 Spinner spinnerArticles;
+    SqlWorker sqlWorker;
     public static String TAG = "DEBUGGABLE_TAG";
     SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        sqlWorker = SqlWorker.getInstance(this);
         spinnerArticles = (Spinner)findViewById(R.id.spinnerArticles);
         //spinnerArticles.setAdapter(new ArrayAdapter<String>());
         spinnerArticles.setOnItemSelectedListener(this);
+       //;
+        spinnerArticles.setAdapter(new QuestionAdapter(this,sqlWorker.getArticles()));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
